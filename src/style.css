@@ -1,0 +1,57 @@
+html {
+  --color-accent: rgb(41, 140, 165);
+  accent-color: var(--color-accent);
+  color-scheme: light dark;
+}
+
+.color-scheme {
+  position: absolute;
+  top: 1rem;
+  right: 3rem;
+  font-family: inherit;
+  font-size: 90%;
+}
+
+body {
+  /* Set line height to 1.5 times the font size
+    and use the OS’s UI font as the website font
+  */
+  font: 100%/1.5 system-ui;
+  max-width: 55rem;
+  margin-inline: auto;
+  padding: 2em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: 400%;
+}
+
+form {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1em;
+}
+
+label {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: var(--color-accent);
+}

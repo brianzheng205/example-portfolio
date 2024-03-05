@@ -1,3 +1,46 @@
+<style>
+  h1 {
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  .contact-info {
+    text-align: center;
+  }
+
+  section {
+    h2 {
+      border-bottom: 1px solid black;
+      margin-bottom: 0rem;
+    }
+  }
+
+  article {
+    margin-bottom: 2rem;
+  }
+
+  .article-header-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  time {
+    font-style: italic;
+  }
+
+  ul {
+    margin: 0px;
+  }
+</style>
+
 <svelte:head>
 	<title>Resume</title>
 </svelte:head>
