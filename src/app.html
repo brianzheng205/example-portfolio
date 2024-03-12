@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<script>
+  let root = document.documentElement;
+  let colorScheme = localStorage.colorScheme ?? "light dark";
+  root.style.setProperty("color-scheme", colorScheme);
+</script>
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />

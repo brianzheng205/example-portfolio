@@ -9,6 +9,12 @@
     {url: "./contact", title: "Contact"},
     {url: "https://github.com/brianzheng205", title: "GitHub"},
   ];
+
+  let root = globalThis?.document?.documentElement;
+  let localStorage = globalThis.localStorage ?? {};
+  let colorScheme = localStorage.colorScheme ?? "light dark";
+  $: root?.style.setProperty("color-scheme", colorScheme);
+  $: localStorage.colorScheme = colorScheme;
 </script>
 
 <style>
@@ -36,6 +42,14 @@
     border-bottom: 0.4em solid var(--border-color);
     padding-bottom: 0.1em;
   }
+
+  .color-scheme {
+  position: absolute;
+  top: 1rem;
+  right: 3rem;
+  font-family: inherit;
+  font-size: 90%;
+}
 </style>
 
 <nav>
@@ -49,5 +63,14 @@
   </a>
 	{/each}
 </nav>
+
+<label class="color-scheme">
+  Theme:
+  <select bind:value={ colorScheme }>
+    <option value="light dark">Automatic Color</option>
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+  </select>
+</label>
 
 <slot />
