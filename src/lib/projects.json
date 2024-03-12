@@ -1,13 +1,13 @@
 [
   {
-    "title": "Lorem ipsum dolor sit.",
+    "title": "Idea Navigator",
     "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque inventore eum exercitationem, corporis nulla, porro debitis, recusandae eius possimus error cupiditate perspiciatis non consequatur architecto enim labore consequuntur officia suscipit."
+    "description": "The Idea Navigator is a tool that automatically organize and sort your data into clusters of similar data, which you can visualize and navigate through on a 2D space."
   },
   {
-    "title": "Quia, sunt? Quas, animi?",
+    "title": "Bounce",
     "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Fuga praesentium voluptatum dolore esse at. Sint explicabo provident nisi placeat autem exercitationem pariatur iure, incidunt quod alias repudiandae quibusdam repellat id optio doloremque odit, illum ad esse. Eligendi, nisi."
+    "description": "Bounce is a web app that helps you keep track of your responsibilities and also helps suggests recipes and groceries."
   },
   {
     "title": "Iure perspiciatis similique ullam!",
