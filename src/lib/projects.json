@@ -1,62 +1,74 @@
 [
   {
     "title": "Idea Navigator",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "year": "2023",
+    "image": "images/Idea Navigator.png",
     "description": "The Idea Navigator is a tool that automatically organize and sort your data into clusters of similar data, which you can visualize and navigate through on a 2D space."
   },
   {
     "title": "Bounce",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+    "year": "2023",
+    "image": "images/Bounce.png",
     "description": "Bounce is a web app that helps you keep track of your responsibilities and also helps suggests recipes and groceries."
   },
   {
-    "title": "Iure perspiciatis similique ullam!",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Quas, fugit distinctio? Ipsum blanditiis laborum odio, maiores dicta, ipsa optio dolor recusandae libero maxime nisi. In quasi culpa voluptates iste suscipit possimus, ad voluptatibus hic cupiditate doloribus facere cumque?"
+    "title": "Portfolio",
+    "year": "2023",
+    "image": "images/Portfolio.png",
+    "description": "This is my portfolio, where I showcase my projects and skills."
   },
   {
-    "title": "Commodi repudiandae necessitatibus eaque.",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Quisquam perspiciatis ex, amet laudantium neque commodi quos dolorum minus ad veritatis vel obcaecati saepe possimus ipsum quidem ea quas doloremque laboriosam culpa repudiandae consectetur consequatur itaque inventore? Minima, soluta."
+    "title": "Exploratory Data Analysis",
+    "year": "2024",
+    "image": "images/Exploratory Data Analysis.png",
+    "description": "I examined the data on single family zoning vs other housing zoning in the Greater Boston Area and proposed solutions that could help alleviate the housing crisis."
   },
   {
-    "title": "Reiciendis eligendi soluta ea!",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Ut amet eum voluptatem necessitatibus neque culpa iure impedit praesentium alias excepturi velit molestias, in recusandae sunt, magnam corporis! Reiciendis, ipsa laborum cumque pariatur nisi sapiente reprehenderit culpa neque unde!"
+    "title": "Visualization Design",
+    "year": "2024",
+    "image": "images/Visualization Design.png",
+    "description": "I drew visualizations to help answer the question: How has the gender distribution across age groups changed from 1900 to 2000? I iterated on these designs to produce a final visualization to best answer this question."
   },
   {
-    "title": "Reprehenderit quis maxime laudantium.",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Necessitatibus minima eos voluptates nulla adipisci neque quisquam? Fugiat est natus aperiam maiores ab! Dignissimos harum adipisci, quod voluptatibus nulla excepturi voluptas asperiores laboriosam praesentium quis, veritatis, odio libero eveniet!"
+    "title": "Persuasive or Deceptive Visualization?",
+    "year": "2024",
+    "image": "images/Persuasive or Deceptive Visualization.png",
+    "description": "I designed 2 visualizations: an earnest one and a deceptive on on the proposition \"The global greenhouse gas emission decreased significantly during the COVID pandemic.\" I examined each to see what made it effective."
   },
   {
-    "title": "Dicta reprehenderit debitis iure.",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Blanditiis reiciendis animi a eligendi neque facilis possimus inventore, praesentium repellendus provident ducimus cumque, dolorum voluptas beatae fugiat! Repellat quam nobis quibusdam iure commodi numquam possimus et rerum incidunt nihil!"
+    "title": "Decaf Compiler",
+    "year": "2024",
+    "image": "images/Compiler.jpg",
+    "description": "I am building a compiler of the Decaf programming language in Rust."
   },
   {
-    "title": "Dolore et modi ut?",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Debitis vitae fugiat, itaque, iste neque sit corrupti alias hic libero eum, asperiores consectetur nemo? Excepturi facilis accusamus eum ipsam! Praesentium similique quasi aut ratione voluptatem quia unde explicabo quibusdam."
+    "title": "Pokerbots",
+    "year": "2024",
+    "image": "images/Pokerbots.jpg",
+    "description": "I built a program and implemented different strategies to play a variation of Poker against other programs."
   },
   {
-    "title": "Odio eum excepturi ea?",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Sit, laborum. Earum impedit dolor culpa exercitationem, debitis nam optio iste veritatis consequuntur explicabo mollitia facere dignissimos iure, asperiores aspernatur. Quae harum qui mollitia repellendus itaque blanditiis dolore eligendi doloribus!"
+    "title": "High School Game",
+    "year": "2022",
+    "image": "images/High School.jpg",
+    "description": "I created a game in GameMaker Studio 2 that takes place in my high school."
   },
   {
-    "title": "At velit sed corrupti.",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Ratione pariatur earum dolor aliquam! Dolor sint in praesentium corrupti pariatur, iusto non adipisci minus quia iure magnam, quas nemo? Tempora accusantium a dolorem hic iusto voluptatibus odio asperiores? Hic!"
+    "title": "Box Stacker",
+    "year": "2021",
+    "image": "images/Box Stacker.png",
+    "description": "I created a game where players have to move around boxes to advance to navigate to the next level."
   },
   {
-    "title": "Quos excepturi repellat id.",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Illum explicabo porro at facere odit sapiente eum odio, repudiandae, repellendus, id quos obcaecati perspiciatis laboriosam necessitatibus! Laboriosam neque quo error incidunt distinctio suscipit ipsam saepe officiis, ducimus dolorem sequi?"
+    "title": "Rick & Morty App",
+    "year": "2023",
+    "image": "images/Rick & Morty.png",
+    "description": "I created a website that took data from the Rick & Morty API and displayed it in a user-friendly way."
   },
   {
-    "title": "Possimus voluptatibus aliquam ut.",
-    "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-    "description": "Sit architecto sint non vel recusandae harum nulla quidem eaque numquam tempora officia ducimus molestiae fugiat, accusantium repellendus distinctio similique quaerat officiis, nihil qui? Repudiandae, dolores similique! Aspernatur, consequuntur veniam."
+    "title": "2048",
+    "year": "2021",
+    "image": "images/2048.jpg",
+    "description": "I put my game development skills to the test by recreating the popular game 2048."
   }
 ]

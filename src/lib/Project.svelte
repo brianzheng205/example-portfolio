@@ -20,7 +20,7 @@
   <svelte:element this={"h" + hLevel}>{ p.title }</svelte:element>
   <img
     src={p.image}
-    alt=""
+    alt={p.title}
   />
   <p>
     {p.description}

@@ -1,6 +1,7 @@
 <script>
   import Project from "$lib/Project.svelte";
   export let projects = {}
+  export let hLevel = 2;
 </script>
 
 <style>
@@ -13,6 +14,6 @@
 
 <div class="projects">
   {#each projects as p}
-    <Project info={p} />
+    <Project info={p} hLevel={hLevel}/>
   {/each}
 </div>
