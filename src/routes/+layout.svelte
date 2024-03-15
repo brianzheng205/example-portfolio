@@ -17,6 +17,27 @@
   $: localStorage.colorScheme = colorScheme;
 </script>
 
+<nav>
+	{#each pages as p}
+  <a
+    href={ p.url }
+    class:current={ "." + $page.route.id === p.url }
+    target={ p.url.startsWith("http") ? "_blank" : null }
+  >
+    { p.title }
+  </a>
+	{/each}
+</nav>
+
+<label class="color-scheme">
+  Theme:
+  <select bind:value={ colorScheme }>
+    <option value="light dark">Automatic</option>
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+  </select>
+</label>
+
 <style>
   nav {
     --border-color: oklch(50% 10% 200 / 40%);
@@ -44,33 +65,12 @@
   }
 
   .color-scheme {
-  position: absolute;
-  top: 1rem;
-  right: 3rem;
-  font-family: inherit;
-  font-size: 90%;
-}
+    position: absolute;
+    top: 1rem;
+    right: 3rem;
+    font-family: inherit;
+    font-size: 90%;
+  }
 </style>
-
-<nav>
-	{#each pages as p}
-  <a
-    href={ p.url }
-    class:current={ "." + $page.route.id === p.url }
-    target={ p.url.startsWith("http") ? "_blank" : null }
-  >
-    { p.title }
-  </a>
-	{/each}
-</nav>
-
-<label class="color-scheme">
-  Theme:
-  <select bind:value={ colorScheme }>
-    <option value="light dark">Automatic Color</option>
-    <option value="light">Light</option>
-    <option value="dark">Dark</option>
-  </select>
-</label>
 
 <slot />
