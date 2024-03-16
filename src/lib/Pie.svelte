@@ -12,14 +12,31 @@
     arcData = sliceGenerator(data);
     arcs = arcData.map(d => arcGenerator(d));
   }
+
+  function toggleWedge (index, event) {
+    console.log(event.key);
+    if (!event.key || event.key === "Enter") {
+      selectedIndex = selectedIndex === index ? -1 : index;
+    }
+  }
 </script>
 
 <div class="container">
   <svg viewBox="-50 -50 100 100">
     {#each arcs as arc, index}
-      <path d={arc} fill={ colors(index) }
-            class:selected={selectedIndex === index}
-            on:click={e => selectedIndex = selectedIndex === index ? -1 : index} />
+      <path d={arc}
+        style = "
+          --start-angle: { arcData[index]?.startAngle }rad;
+          --end-angle: { arcData[index]?.endAngle }rad;
+        "
+        fill={ colors(index) }
+        class:selected={selectedIndex === index}
+        on:click={e => toggleWedge(index, e)}
+        on:keyup={e => toggleWedge(index, e)}
+        tabindex="0"
+        role="button"
+        aria-label={data[index].label}
+      />
     {/each}
   </svg>
 
@@ -46,8 +63,8 @@
     overflow: visible;
   }
 
-  svg:has(path:hover) {
-    path:not(:hover) {
+  svg:has(path:hover, path:focus-visible) {
+    path:not(:hover, :focus-visible) {
       opacity: 50%;
     }
   }
@@ -55,6 +72,19 @@
   path {
     transition: 300ms;
     cursor: pointer;
+    outline: none;
+    --angle: calc(var(--end-angle) - var(--start-angle));
+	  --mid-angle: calc(var(--start-angle) + var(--angle) / 2);
+
+    &.selected {
+      transform: rotate(var(--mid-angle))
+                translateY(-6px) scale(1.1)
+                rotate(calc(-1 * var(--mid-angle)));
+    }
+
+    transform: rotate(var(--mid-angle))
+	           translateY(0)
+	           rotate(calc(-1 * var(--mid-angle)));
   }
 
   .legend {
