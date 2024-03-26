@@ -1,13 +1,14 @@
 <script>
-  import { page } from '$app/stores';
+  import { page } from "$app/stores";
   import "../style.css";
-  
+
   let pages = [
-    {url: "./", title: "Home"},
-    {url: "./resume", title: "Resume"},
-    {url: "./projects", title: "Projects"},
-    {url: "./contact", title: "Contact"},
-    {url: "https://github.com/brianzheng205", title: "GitHub"},
+    { url: "./", title: "Home" },
+    { url: "./resume", title: "Resume" },
+    { url: "./projects", title: "Projects" },
+    { url: "./contact", title: "Contact" },
+    { url: "./meta", title: "Meta" },
+    { url: "https://github.com/brianzheng205", title: "GitHub" },
   ];
 
   let root = globalThis?.document?.documentElement;
@@ -18,25 +19,27 @@
 </script>
 
 <nav>
-	{#each pages as p}
-  <a
-    href={ p.url }
-    class:current={ "." + $page.route.id === p.url }
-    target={ p.url.startsWith("http") ? "_blank" : null }
-  >
-    { p.title }
-  </a>
-	{/each}
+  {#each pages as p}
+    <a
+      href={p.url}
+      class:current={"." + $page.route.id === p.url}
+      target={p.url.startsWith("http") ? "_blank" : null}
+    >
+      {p.title}
+    </a>
+  {/each}
 </nav>
 
 <label class="color-scheme">
   Theme:
-  <select bind:value={ colorScheme }>
+  <select bind:value={colorScheme}>
     <option value="light dark">Automatic</option>
     <option value="light">Light</option>
     <option value="dark">Dark</option>
   </select>
 </label>
+
+<slot />
 
 <style>
   nav {
@@ -72,5 +75,3 @@
     font-size: 90%;
   }
 </style>
-
-<slot />

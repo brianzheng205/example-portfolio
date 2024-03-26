@@ -1,6 +1,23 @@
 <script>
+  import { onMount } from "svelte";
+
   import Projects from "$lib/Projects.svelte";
+  import Stats from "$lib/Stats.svelte";
+
   import projects from "$lib/projects.json";
+
+  let stats = [];
+
+  onMount(async () => {
+    const response = await fetch("https://api.github.com/users/brianzheng205");
+    const data = await response.json();
+
+    stats = [
+      { title: "FOLLOWERS", data: data["followers"] },
+      { title: "FOLLOWING", data: data["following"] },
+      { title: "PUBLIC REPOS", data: data["public_repos"] },
+    ];
+  });
 </script>
 
 <svelte:head>
@@ -17,61 +34,5 @@
 
 <section>
   <h2>My Github Stats</h2>
-  {#await fetch("https://api.github.com/users/brianzheng205")}
-    <p>Loading...</p>
-  {:then response}
-    {#await response.json()}
-      <p>Decoding...</p>
-    {:then data}
-      <dl>
-        <div>
-          <dt>FOLLOWERS</dt>
-          <dd>{data["followers"]}</dd>
-        </div>
-
-        <div>
-          <dt>FOLLOWING</dt>
-          <dd>{data["following"]}</dd>
-        </div>
-
-        <div>
-          <dt>PUBLIC REPOS</dt>
-          <dd>{data["public_repos"]}</dd>
-        </div>
-      </dl>
-    {:catch error}
-      <p class="error">
-        Something went wrong: {error.message}
-      </p>
-    {/await}
-  {:catch error}
-    <p class="error">
-      Something went wrong: {error.message}
-    </p>
-  {/await}
+  <Stats {stats} />
 </section>
-
-<style>
-  dl {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    div {
-      display: flex;
-      flex-direction: column;
-
-      dt {
-        font-weight: bold;
-        font-size: 12px;
-      }
-
-      dd {
-        margin: 0;
-        font-size: 35px;
-        line-height: normal;
-        font-weight: 50;
-      }
-    }
-  }
-</style>

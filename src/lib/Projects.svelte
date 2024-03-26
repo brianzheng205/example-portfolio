@@ -1,8 +1,14 @@
 <script>
   import Project from "$lib/Project.svelte";
-  export let projects = {}
+  export let projects = {};
   export let hLevel = 2;
 </script>
+
+<div class="projects">
+  {#each projects as p}
+    <Project info={p} {hLevel} />
+  {/each}
+</div>
 
 <style>
   .projects {
@@ -11,9 +17,3 @@
     gap: 1em;
   }
 </style>
-
-<div class="projects">
-  {#each projects as p}
-    <Project info={p} hLevel={hLevel}/>
-  {/each}
-</div>

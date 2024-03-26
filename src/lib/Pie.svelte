@@ -1,19 +1,19 @@
 <script>
-  import * as d3 from 'd3';
+  import * as d3 from "d3";
 
   let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
   export let data = [];
   export let selectedIndex = -1;
   let colors = d3.scaleOrdinal(d3.schemeTableau10);
-  let sliceGenerator = d3.pie().value(d => d.value);
+  let sliceGenerator = d3.pie().value((d) => d.value);
   let arcData;
   let arcs;
   $: {
     arcData = sliceGenerator(data);
-    arcs = arcData.map(d => arcGenerator(d));
+    arcs = arcData.map((d) => arcGenerator(d));
   }
 
-  function toggleWedge (index, event) {
+  function toggleWedge(index, event) {
     console.log(event.key);
     if (!event.key || event.key === "Enter") {
       selectedIndex = selectedIndex === index ? -1 : index;
@@ -24,15 +24,16 @@
 <div class="container">
   <svg viewBox="-50 -50 100 100">
     {#each arcs as arc, index}
-      <path d={arc}
-        style = "
-          --start-angle: { arcData[index]?.startAngle }rad;
-          --end-angle: { arcData[index]?.endAngle }rad;
+      <path
+        d={arc}
+        style="
+          --start-angle: {arcData[index]?.startAngle}rad;
+          --end-angle: {arcData[index]?.endAngle}rad;
         "
-        fill={ colors(index) }
+        fill={colors(index)}
         class:selected={selectedIndex === index}
-        on:click={e => toggleWedge(index, e)}
-        on:keyup={e => toggleWedge(index, e)}
+        on:click={(e) => toggleWedge(index, e)}
+        on:keyup={(e) => toggleWedge(index, e)}
         tabindex="0"
         role="button"
         aria-label={data[index].label}
@@ -42,7 +43,10 @@
 
   <ul class="legend">
     {#each data as d, index}
-      <li style="--color: { colors(index) }" class:selected={selectedIndex === index}>
+      <li
+        style="--color: {colors(index)}"
+        class:selected={selectedIndex === index}
+      >
         <span class="swatch"></span>
         {d.label} <em>({d.value})</em>
       </li>
@@ -74,17 +78,15 @@
     cursor: pointer;
     outline: none;
     --angle: calc(var(--end-angle) - var(--start-angle));
-	  --mid-angle: calc(var(--start-angle) + var(--angle) / 2);
+    --mid-angle: calc(var(--start-angle) + var(--angle) / 2);
 
     &.selected {
-      transform: rotate(var(--mid-angle))
-                translateY(-6px) scale(1.1)
-                rotate(calc(-1 * var(--mid-angle)));
+      transform: rotate(var(--mid-angle)) translateY(-6px) scale(1.1)
+        rotate(calc(-1 * var(--mid-angle)));
     }
 
-    transform: rotate(var(--mid-angle))
-	           translateY(0)
-	           rotate(calc(-1 * var(--mid-angle)));
+    transform: rotate(var(--mid-angle)) translateY(0)
+      rotate(calc(-1 * var(--mid-angle)));
   }
 
   .legend {
