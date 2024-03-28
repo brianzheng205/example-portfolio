@@ -2,13 +2,13 @@
   import * as d3 from "d3";
 
   let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
-  export let data = [];
-  export let selectedIndex = -1;
+  export let data = [],
+    selectedIndex = -1;
   let colors = d3.scaleOrdinal(d3.schemeTableau10);
   let sliceGenerator = d3.pie().value((d) => d.value);
-  let arcData;
-  let arcs;
+  let arcData, arcs;
   $: {
+    console.log(data);
     arcData = sliceGenerator(data);
     arcs = arcData.map((d) => arcGenerator(d));
   }

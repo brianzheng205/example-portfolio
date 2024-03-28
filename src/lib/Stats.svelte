@@ -1,12 +1,14 @@
 <script>
-  export let stats = {};
+  export let stats = new Map();
+  let statsEntries = stats.entries();
+  $: statsEntries = stats.entries();
 </script>
 
 <dl>
-  {#each stats as s}
+  {#each statsEntries as [title, data]}
     <div>
-      <dt>{s.title}</dt>
-      <dd>{s.data}</dd>
+      <dt>{title.toUpperCase()}</dt>
+      <dd>{data}</dd>
     </div>
   {/each}
 </dl>

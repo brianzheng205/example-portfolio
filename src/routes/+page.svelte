@@ -6,17 +6,17 @@
 
   import projects from "$lib/projects.json";
 
-  let stats = [];
+  let stats = new Map();
 
   onMount(async () => {
     const response = await fetch("https://api.github.com/users/brianzheng205");
     const data = await response.json();
 
-    stats = [
-      { title: "FOLLOWERS", data: data["followers"] },
-      { title: "FOLLOWING", data: data["following"] },
-      { title: "PUBLIC REPOS", data: data["public_repos"] },
-    ];
+    stats = new Map([
+      ["FOLLOWERS", data["followers"]],
+      ["FOLLOWING", data["following"]],
+      ["PUBLIC REPOS", data["public_repos"]],
+    ]);
   });
 </script>
 

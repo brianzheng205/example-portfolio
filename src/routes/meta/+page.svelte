@@ -4,25 +4,24 @@
   import { computePosition, autoPlacement, offset } from "@floating-ui/dom";
 
   import Stats from "$lib/Stats.svelte";
+  import Pie from "$lib/Pie.svelte";
 
-  let data = [];
-  let commits = [];
-  let stats = [];
+  let data = [],
+    commits = [],
+    portfolio_stats = new Map();
   let width = 1000,
     height = 600;
-  let xScale;
-  let yScale;
-  let margin = { top: 10, right: 10, bottom: 30, left: 20 };
-  let usableArea = {
-    top: margin.top,
-    right: width - margin.right,
-    bottom: height - margin.bottom,
-    left: margin.left,
-  };
+  let xScale, yScale, rScale;
+  let margin = { top: 10, right: 10, bottom: 30, left: 20 },
+    usableArea = {
+      top: margin.top,
+      right: width - margin.right,
+      bottom: height - margin.bottom,
+      left: margin.left,
+    };
   usableArea.width = usableArea.right - usableArea.left;
   usableArea.height = usableArea.bottom - usableArea.top;
-  let xAxis, yAxis;
-  let yAxisGridlines;
+  let xAxis, yAxis, yAxisGridlines;
 
   onMount(async () => {
     data = await d3.csv("loc.csv", (row) => ({
@@ -59,14 +58,15 @@
 
         return ret;
       });
-    stats = [
-      { title: "TOTAL LINES", data: data.length },
-      { title: "TOTAL COMMITS", data: commits.length },
-      { title: "NUMBER OF FILES", data: d3.group(data, (d) => d.file).size },
-      { title: "LONGEST FILE LENGTH", data: d3.max(data, (d) => d.length) },
-      { title: "LONGEST LINE LENGTH", data: d3.max(data, (d) => d.line) },
-      { title: "DEEPEST LINE DEPTH", data: d3.max(data, (d) => d.depth) },
-    ];
+    commits = d3.sort(commits, (d) => -d.totalLines);
+    portfolio_stats = new Map([
+      ["TOTAL LINES", data.length],
+      ["TOTAL COMMITS", commits.length],
+      ["NUMBER OF FILES", d3.group(data, (d) => d.file).size],
+      ["LONGEST FILE LENGTH", d3.max(data, (d) => d.length)],
+      ["LONGEST LINE LENGTH", d3.max(data, (d) => d.line)],
+      ["DEEPEST LINE DEPTH", d3.max(data, (d) => d.depth)],
+    ]);
     // COMMITS SCATTERPLOT
     xScale = d3
       .scaleTime()
@@ -77,6 +77,10 @@
       .scaleLinear()
       .domain([0, 24])
       .range([usableArea.bottom, usableArea.top]);
+    rScale = d3
+      .scaleSqrt()
+      .domain(d3.extent(commits, (c) => c.totalLines))
+      .range([4, 20]);
   });
 
   $: {
@@ -96,16 +100,16 @@
     }
   }
 
-  let hoveredIndex = -1;
-  let hoveredCommit = {};
-  const transitionDuration = 500;
+  let hoveredIndex = -1,
+    hoveredCommit = {};
   $: {
     if (commits[hoveredIndex] !== undefined) {
       hoveredCommit = commits[hoveredIndex];
     }
   }
-  let commitTooltip;
-  let tooltipPosition = { x: 0, y: 0 };
+
+  let commitTooltip,
+    tooltipPosition = { x: 0, y: 0 };
 
   async function dotInteraction(index, evt) {
     let hoveredDot = evt.target;
@@ -120,6 +124,53 @@
       hoveredIndex = -1;
     }
   }
+
+  let svg,
+    brushSelection,
+    selectedCommits = [],
+    hasSelection,
+    selectedLines,
+    languageBreakdown = [];
+  $: {
+    d3.select(svg).call(d3.brush().on("start brush end", brushed));
+    d3.select(svg).selectAll(".dots, .overlay ~ *").raise();
+  }
+  $: {
+    selectedCommits = brushSelection ? commits.filter(isCommitSelected) : [];
+    hasSelection = brushSelection && selectedCommits.length > 0;
+    selectedLines = (hasSelection ? selectedCommits : commits).flatMap(
+      (d) => d.lines
+    );
+    const f = d3.format(".1f");
+    languageBreakdown = d3.rollup(
+      selectedLines,
+      (D) => f((D.length / selectedLines.length) * 100),
+      (line) => line.type
+    );
+    languageBreakdown = Array.from(languageBreakdown.entries());
+    for (let i = 0; i < languageBreakdown.length; i++) {
+      languageBreakdown[i] = {
+        label: languageBreakdown[i][0].toUpperCase(),
+        value: languageBreakdown[i][1],
+      };
+    }
+  }
+
+  function brushed(evt) {
+    brushSelection = evt.selection;
+  }
+
+  function isCommitSelected(commit) {
+    if (!brushSelection) {
+      return false;
+    }
+
+    let min = brushSelection[0];
+    let max = brushSelection[1];
+    let x = xScale(commit.date);
+    let y = yScale(commit.hourFrac);
+    return x >= min[0] && x <= max[0] && y >= min[1] && y <= max[1];
+  }
 </script>
 
 <svelte:head>
@@ -127,9 +178,9 @@
 </svelte:head>
 <h1>Meta</h1>
 <p>This page contains data stats about the code of this website.</p>
-<Stats {stats} />
+<Stats stats={portfolio_stats} />
 <h2>Commits by time of day</h2>
-<svg viewBox="0 0 {width} {height}">
+<svg viewBox="0 0 {width} {height}" bind:this={svg}>
   <g
     class="gridlines"
     transform="translate({usableArea.left}, 0)"
@@ -142,8 +193,8 @@
       <circle
         cx={xScale(commit.datetime)}
         cy={yScale(commit.hourFrac)}
-        r="5"
-        fill="steelblue"
+        r={rScale(commit.totalLines)}
+        fill={isCommitSelected(commit) ? "orange" : "steelblue"}
         on:mouseenter={(evt) => dotInteraction(index, evt)}
         on:mouseleave={(evt) => dotInteraction(index, evt)}
         tabindex="0"
@@ -188,6 +239,12 @@
   <dt>LINES EDITED</dt>
   <dd>{hoveredCommit.totalLines}</dd>
 </dl>
+<p>
+  {hasSelection ? selectedCommits.length : "No"} commits selected
+</p>
+{#if hasSelection}
+  <Pie data={languageBreakdown} />
+{/if}
 
 <style>
   svg {
@@ -201,6 +258,10 @@
 
     &:hover {
       transform: scale(1.5);
+    }
+
+    &:not(:hover) {
+      opacity: 0.7;
     }
   }
 
