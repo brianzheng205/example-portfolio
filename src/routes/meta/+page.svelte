@@ -141,10 +141,10 @@
     selectedLines = (hasSelection ? selectedCommits : commits).flatMap(
       (d) => d.lines
     );
-    const f = d3.format(".1f");
+    const f = d3.format(".2f");
     languageBreakdown = d3.rollup(
       selectedLines,
-      (D) => f((D.length / selectedLines.length) * 100),
+      (D) => f(D.length / selectedLines.length),
       (line) => line.type
     );
     languageBreakdown = Array.from(languageBreakdown.entries());
@@ -167,7 +167,7 @@
 
     let min = brushSelection[0];
     let max = brushSelection[1];
-    let x = xScale(commit.date);
+    let x = xScale(commit.datetime);
     let y = yScale(commit.hourFrac);
     return x >= min[0] && x <= max[0] && y >= min[1] && y <= max[1];
   }
@@ -242,9 +242,7 @@
 <p>
   {hasSelection ? selectedCommits.length : "No"} commits selected
 </p>
-{#if hasSelection}
-  <Pie data={languageBreakdown} />
-{/if}
+<Pie data={hasSelection ? languageBreakdown : {}} />
 
 <style>
   svg {

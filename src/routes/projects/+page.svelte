@@ -26,6 +26,7 @@
     pieData = rolledData.map(([year, count]) => {
       return { value: count, label: year };
     });
+    console.log(pieData);
     selectedYear =
       selectedYearIndex > -1 ? pieData[selectedYearIndex].label : null;
 

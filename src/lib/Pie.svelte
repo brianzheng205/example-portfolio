@@ -8,13 +8,11 @@
   let sliceGenerator = d3.pie().value((d) => d.value);
   let arcData, arcs;
   $: {
-    console.log(data);
     arcData = sliceGenerator(data);
     arcs = arcData.map((d) => arcGenerator(d));
   }
 
   function toggleWedge(index, event) {
-    console.log(event.key);
     if (!event.key || event.key === "Enter") {
       selectedIndex = selectedIndex === index ? -1 : index;
     }
@@ -41,17 +39,19 @@
     {/each}
   </svg>
 
-  <ul class="legend">
-    {#each data as d, index}
-      <li
-        style="--color: {colors(index)}"
-        class:selected={selectedIndex === index}
-      >
-        <span class="swatch"></span>
-        {d.label} <em>({d.value})</em>
-      </li>
-    {/each}
-  </ul>
+  {#if data.length > 0}
+    <ul class="legend">
+      {#each data as d, index}
+        <li
+          style="--color: {colors(index)}"
+          class:selected={selectedIndex === index}
+        >
+          <span class="swatch"></span>
+          {d.label} <em>({d.value})</em>
+        </li>
+      {/each}
+    </ul>
+  {/if}
 </div>
 
 <style>
