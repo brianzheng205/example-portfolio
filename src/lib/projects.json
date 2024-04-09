@@ -15,25 +15,29 @@
     "title": "Portfolio",
     "year": "2023",
     "image": "images/Portfolio.png",
-    "description": "This is my portfolio, where I showcase my projects and skills."
+    "description": "This is my portfolio, where I showcase my projects and skills.",
+    "url": "https://portfolio-brianzheng205.vercel.app/"
   },
   {
     "title": "Exploratory Data Analysis",
     "year": "2024",
     "image": "images/Exploratory Data Analysis.png",
-    "description": "I examined the data on single family zoning vs other housing zoning in the Greater Boston Area and proposed solutions that could help alleviate the housing crisis."
+    "description": "I examined the data on single family zoning vs other housing zoning in the Greater Boston Area and proposed solutions that could help alleviate the housing crisis.",
+    "url": "https://brianzheng205.github.io/assignment_2/"
   },
   {
     "title": "Visualization Design",
     "year": "2024",
     "image": "images/Visualization Design.png",
-    "description": "I drew visualizations to help answer the question: How has the gender distribution across age groups changed from 1900 to 2000? I iterated on these designs to produce a final visualization to best answer this question."
+    "description": "I drew visualizations to help answer the question: How has the gender distribution across age groups changed from 1900 to 2000? I iterated on these designs to produce a final visualization to best answer this question.",
+    "url": "https://brianzheng205.github.io/assignment_3/"
   },
   {
     "title": "Persuasive or Deceptive Visualization?",
     "year": "2024",
     "image": "images/Persuasive or Deceptive Visualization.png",
-    "description": "I designed 2 visualizations: an earnest one and a deceptive on on the proposition \"The global greenhouse gas emission decreased significantly during the COVID pandemic.\" I examined each to see what made it effective."
+    "description": "I designed 2 visualizations: an earnest one and a deceptive on on the proposition \"The global greenhouse gas emission decreased significantly during the COVID pandemic.\" I examined each to see what made it effective.",
+    "url": "https://brianzheng205.github.io/assignment_4/"
   },
   {
     "title": "Decaf Compiler",
@@ -66,9 +70,10 @@
     "description": "I created a website that took data from the Rick & Morty API and displayed it in a user-friendly way."
   },
   {
-    "title": "2048",
-    "year": "2021",
-    "image": "images/2048.jpg",
-    "description": "I put my game development skills to the test by recreating the popular game 2048."
+    "title": "Bike Watching",
+    "year": "2024",
+    "image": "images/Bike Watching.png",
+    "description": "I created a website to visualize the Blue Bike stations traffic in Boston and Cambridge during different times of the day.",
+    "url": "https://brianzheng205.github.io/bike-watching/"
   }
 ]

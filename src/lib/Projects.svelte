@@ -2,6 +2,9 @@
   import Project from "$lib/Project.svelte";
   export let projects = {};
   export let hLevel = 2;
+
+  // order projects based on year
+  $: projects = projects.sort((a, b) => b.year - a.year);
 </script>
 
 <div class="projects">

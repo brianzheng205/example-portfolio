@@ -57,7 +57,7 @@
 <style>
   .container {
     display: flex;
-    gap: 2em;
+    gap: 3em;
     align-items: center;
   }
 
