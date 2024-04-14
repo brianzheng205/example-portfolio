@@ -1,27 +1,15 @@
 <script>
   import * as d3 from "d3";
   import { onMount } from "svelte";
-  import { computePosition, autoPlacement, offset } from "@floating-ui/dom";
 
   import Stats from "$lib/Stats.svelte";
   import Pie from "$lib/Pie.svelte";
+  import CommitScatterplot from "./Scatterplot.svelte";
 
   let data = [],
     commits = [],
+    selectedCommits = [],
     portfolio_stats = new Map();
-  let width = 1000,
-    height = 600;
-  let xScale, yScale, rScale;
-  let margin = { top: 10, right: 10, bottom: 30, left: 20 },
-    usableArea = {
-      top: margin.top,
-      right: width - margin.right,
-      bottom: height - margin.bottom,
-      left: margin.left,
-    };
-  usableArea.width = usableArea.right - usableArea.left;
-  usableArea.height = usableArea.bottom - usableArea.top;
-  let xAxis, yAxis, yAxisGridlines;
 
   onMount(async () => {
     data = await d3.csv("loc.csv", (row) => ({
@@ -60,90 +48,24 @@
       });
     commits = d3.sort(commits, (d) => -d.totalLines);
     portfolio_stats = new Map([
-      ["TOTAL LINES", data.length],
-      ["TOTAL COMMITS", commits.length],
-      ["NUMBER OF FILES", d3.group(data, (d) => d.file).size],
-      ["LONGEST FILE LENGTH", d3.max(data, (d) => d.length)],
-      ["LONGEST LINE LENGTH", d3.max(data, (d) => d.line)],
-      ["DEEPEST LINE DEPTH", d3.max(data, (d) => d.depth)],
+      ["TOTAL LINES", filteredLines.length],
+      ["TOTAL COMMITS", filteredCommits.length],
+      ["NUMBER OF FILES", d3.group(filteredLines, (d) => d.file).size],
+      ["LONGEST FILE LENGTH", d3.max(filteredLines, (d) => d.length)],
+      ["LONGEST LINE LENGTH", d3.max(filteredLines, (d) => d.line)],
+      ["DEEPEST LINE DEPTH", d3.max(filteredLines, (d) => d.depth)],
     ]);
-    // COMMITS SCATTERPLOT
-    xScale = d3
-      .scaleTime()
-      .domain(d3.extent(commits, (c) => c.datetime))
-      .range([usableArea.left, usableArea.right])
-      .nice();
-    yScale = d3
-      .scaleLinear()
-      .domain([0, 24])
-      .range([usableArea.bottom, usableArea.top]);
-    rScale = d3
-      .scaleSqrt()
-      .domain(d3.extent(commits, (c) => c.totalLines))
-      .range([4, 20]);
   });
 
-  $: {
-    if (xScale && yScale) {
-      d3.select(xAxis).call(d3.axisBottom(xScale));
-      d3.select(yAxis).call(
-        d3
-          .axisLeft(yScale)
-          .tickFormat((d) => String(d % 24).padStart(2, "0") + ":00")
-      );
-    }
-
-    if (yAxisGridlines && yScale) {
-      d3.select(yAxisGridlines).call(
-        d3.axisLeft(yScale).tickFormat("").tickSize(-usableArea.width)
-      );
-    }
-  }
-
-  let hoveredIndex = -1,
-    hoveredCommit = {};
-  $: {
-    if (commits[hoveredIndex] !== undefined) {
-      hoveredCommit = commits[hoveredIndex];
-    }
-  }
-
-  let commitTooltip,
-    tooltipPosition = { x: 0, y: 0 };
-
-  async function dotInteraction(index, evt) {
-    let hoveredDot = evt.target;
-
-    if (evt.type === "mouseenter" || evt.type === "focus") {
-      hoveredIndex = index;
-      tooltipPosition = await computePosition(hoveredDot, commitTooltip, {
-        strategy: "fixed",
-        middleware: [offset(30), autoPlacement()],
-      });
-    } else if (evt.type === "mouseleave" || evt.type === "blur") {
-      hoveredIndex = -1;
-    } else if (
-      evt.type === "click" ||
-      (evt.type === "keyup" && evt.key === "Enter")
-    ) {
-      selectedCommits = [commits[index]];
-    }
-  }
-
-  let svg,
-    selectedCommits = [],
-    hasSelection,
+  // SELECTION
+  let hasSelection,
     selectedLines,
     languageBreakdown = [];
+  $: hasSelection = selectedCommits.length > 0;
   $: {
-    d3.select(svg).call(d3.brush().on("start brush end", brushed));
-    d3.select(svg).selectAll(".dots, .overlay ~ *").raise();
-  }
-  $: {
-    hasSelection = selectedCommits.length > 0;
-    selectedLines = (hasSelection ? selectedCommits : commits).flatMap(
-      (d) => d.lines
-    );
+    selectedLines = (
+      selectedCommits.length > 0 ? selectedCommits : commits
+    ).flatMap((d) => d.lines);
     const f = d3.format(".2f");
     languageBreakdown = d3.rollup(
       selectedLines,
@@ -159,22 +81,20 @@
     }
   }
 
-  function brushed(evt) {
-    let brushSelection = evt.selection;
-    selectedCommits = !brushSelection
-      ? []
-      : commits.filter((commit) => {
-          let min = { x: brushSelection[0][0], y: brushSelection[0][1] };
-          let max = { x: brushSelection[1][0], y: brushSelection[1][1] };
-          let x = xScale(commit.date);
-          let y = yScale(commit.hourFrac);
-
-          return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
-        });
-  }
-
-  function isCommitSelected(commit) {
-    return selectedCommits.includes(commit);
+  // FILTERING
+  let commitProgress = 100;
+  let timeScale,
+    commitMaxTime,
+    filteredCommits = [],
+    filteredLines = [];
+  $: {
+    timeScale = d3
+      .scaleTime()
+      .domain(d3.extent(commits, (c) => c.datetime))
+      .range([0, 100]);
+    commitMaxTime = timeScale.invert(commitProgress);
+    filteredCommits = commits.filter((c) => c.datetime <= commitMaxTime);
+    filteredLines = data.filter((d) => d.datetime <= commitMaxTime);
   }
 </script>
 
@@ -184,127 +104,47 @@
 <h1>Meta</h1>
 <p>This page contains data stats about the code of this website.</p>
 <Stats stats={portfolio_stats} />
+
 <h2>Commits by time of day</h2>
-<svg viewBox="0 0 {width} {height}" bind:this={svg}>
-  <g
-    class="gridlines"
-    transform="translate({usableArea.left}, 0)"
-    bind:this={yAxisGridlines}
-  />
-  <g transform="translate(0, {usableArea.bottom})" bind:this={xAxis} />
-  <g transform="translate({usableArea.left}, 0)" bind:this={yAxis} />
-  <g class="dots">
-    {#each commits as commit, index}
-      <circle
-        cx={xScale(commit.datetime)}
-        cy={yScale(commit.hourFrac)}
-        r={rScale(commit.totalLines)}
-        fill={isCommitSelected(commit) ? "orange" : "steelblue"}
-        tabindex="0"
-        aria-describedby="commit-tooltip"
-        aria-haspopup="true"
-        role="button"
-        on:mouseenter={(evt) => dotInteraction(index, evt)}
-        on:mouseleave={(evt) => dotInteraction(index, evt)}
-        on:click={(evt) => dotInteraction(index, evt)}
-        on:keyup={(evt) => dotInteraction(index, evt)}
-        on:focus={(evt) => dotInteraction(index, evt)}
-        on:blur={(evt) => dotInteraction(index, evt)}
-      />
-    {/each}
-  </g>
-</svg>
+<div class="slider">
+  <div class="bar">
+    <label for="time-scale">Show commits until:</label>
+    <input
+      type="range"
+      id="time-scale"
+      min="0"
+      max="100"
+      step="1"
+      bind:value={commitProgress}
+    />
+  </div>
+  <time>{commitMaxTime.toLocaleString()}</time>
+</div>
 
-<dl
-  id="commit-tooltip"
-  class="info tooltip"
-  hidden={hoveredIndex === -1}
-  style="
-    top: {tooltipPosition.y}px;
-    left: {tooltipPosition.x}px;
-    transition-delay: {hoveredIndex === -1 ? 200 : 0}ms;
-  "
-  bind:this={commitTooltip}
-  role="tooltip"
->
-  <dt>COMMIT</dt>
-  <dd>
-    <a href={hoveredCommit.url} target="_blank">{hoveredCommit.id}</a>
-  </dd>
-
-  <dt>DATE</dt>
-  <dd>
-    {hoveredCommit.datetime?.toLocaleString("en", { date: "full" })}
-  </dd>
-
-  <dt>TIME</dt>
-  <dd>{hoveredCommit.datetime?.toLocaleString("en", { time: "short" })}</dd>
-
-  <dt>AUTHOR</dt>
-  <dd>{hoveredCommit.author}</dd>
-
-  <dt>LINES EDITED</dt>
-  <dd>{hoveredCommit.totalLines}</dd>
-</dl>
-<p>
-  {hasSelection ? selectedCommits.length : "No"} commits selected
-</p>
+<CommitScatterplot commits={filteredCommits} bind:selectedCommits />
 <Pie data={hasSelection ? languageBreakdown : []} />
 
 <style>
-  svg {
-    overflow: visible;
-  }
+  .slider {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
 
-  circle {
-    transition: 200ms;
-    transform-origin: center;
-    transform-box: fill-box;
+    .bar {
+      display: flex;
+      gap: 0.5em;
 
-    &:hover {
-      transform: scale(1.5);
+      label {
+        flex: 1;
+      }
+
+      input {
+        flex: 5;
+      }
     }
 
-    &:not(:hover) {
-      opacity: 0.7;
-    }
-  }
-
-  .gridlines {
-    stroke-opacity: 0.2;
-  }
-
-  dl.info {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0em 0.5em;
-    transition-duration: 500ms;
-    transition-property: opacity, visibility;
-
-    &[hidden]:not(:hover, :focus-within) {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    dt {
-      margin: 0;
+    time {
       text-align: right;
-      font-weight: bold;
     }
-
-    dd {
-      margin: 0;
-    }
-  }
-
-  .tooltip {
-    position: fixed;
-    top: 1em;
-    left: 2em;
-    background-color: oklch(70% 0% 0 / 90%);
-    padding: 0.5em;
-    box-shadow: 5px 5px 5px rgb(157, 138, 138);
-    backdrop-filter: blur(5px);
-    border-radius: 0.5em;
   }
 </style>
