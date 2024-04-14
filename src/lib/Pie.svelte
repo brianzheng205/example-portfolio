@@ -1,11 +1,11 @@
 <script>
   import * as d3 from "d3";
 
-  export let data = [];
+  export let data = [],
+    colors = d3.scaleOrdinal(d3.schemeTableau10);
   let selectedIndex = -1;
   let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
   let pieData;
-  let colors = d3.scaleOrdinal(d3.schemeTableau10);
   let sliceGenerator = d3.pie().value((d) => d.value);
   $: {
     pieData = data.map((d) => ({ ...d }));

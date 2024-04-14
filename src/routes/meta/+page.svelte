@@ -5,6 +5,7 @@
   import Stats from "$lib/Stats.svelte";
   import Pie from "$lib/Pie.svelte";
   import CommitScatterplot from "./Scatterplot.svelte";
+  import FileLines from "./FileLines.svelte";
 
   let data = [],
     commits = [],
@@ -77,15 +78,15 @@
       selectedCommits.length > 0 ? selectedCommits : commits
     ).flatMap((d) => d.lines);
     const f = d3.format(".2f");
-    languageBreakdown = d3.rollup(
+    const languageBreakdownDict = d3.rollup(
       selectedLines,
       (D) => f(D.length / selectedLines.length),
       (line) => line.type
     );
-    languageBreakdown = Array.from(languageBreakdown.entries());
+    languageBreakdown = Array.from(languageBreakdownDict.entries());
     for (let i = 0; i < languageBreakdown.length; i++) {
       languageBreakdown[i] = {
-        label: languageBreakdown[i][0].toUpperCase(),
+        label: languageBreakdown[i][0],
         value: languageBreakdown[i][1],
       };
     }
@@ -106,6 +107,9 @@
     filteredCommits = commits.filter((c) => c.datetime <= commitMaxTime);
     filteredLines = data.filter((d) => d.datetime <= commitMaxTime);
   }
+
+  // COLORS
+  const colors = d3.scaleOrdinal(d3.schemeTableau10);
 </script>
 
 <svelte:head>
@@ -113,6 +117,7 @@
 </svelte:head>
 <h1>Meta</h1>
 <p>This page contains data stats about the code of this website.</p>
+
 <Stats stats={portfolio_stats} />
 
 <h2>Commits by time of day</h2>
@@ -131,8 +136,9 @@
   <time>{commitMaxTime.toLocaleString()}</time>
 </div>
 
+<FileLines lines={filteredLines} {colors} />
 <CommitScatterplot commits={filteredCommits} bind:selectedCommits />
-<Pie data={hasSelection ? languageBreakdown : []} />
+<Pie data={hasSelection ? languageBreakdown : []} {colors} />
 
 <style>
   .slider {
