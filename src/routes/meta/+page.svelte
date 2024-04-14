@@ -122,11 +122,15 @@
       });
     } else if (evt.type === "mouseleave" || evt.type === "blur") {
       hoveredIndex = -1;
+    } else if (
+      evt.type === "click" ||
+      (evt.type === "keyup" && evt.key === "Enter")
+    ) {
+      selectedCommits = [commits[index]];
     }
   }
 
   let svg,
-    brushSelection,
     selectedCommits = [],
     hasSelection,
     selectedLines,
@@ -136,8 +140,7 @@
     d3.select(svg).selectAll(".dots, .overlay ~ *").raise();
   }
   $: {
-    selectedCommits = brushSelection ? commits.filter(isCommitSelected) : [];
-    hasSelection = brushSelection && selectedCommits.length > 0;
+    hasSelection = selectedCommits.length > 0;
     selectedLines = (hasSelection ? selectedCommits : commits).flatMap(
       (d) => d.lines
     );
@@ -157,19 +160,21 @@
   }
 
   function brushed(evt) {
-    brushSelection = evt.selection;
+    let brushSelection = evt.selection;
+    selectedCommits = !brushSelection
+      ? []
+      : commits.filter((commit) => {
+          let min = { x: brushSelection[0][0], y: brushSelection[0][1] };
+          let max = { x: brushSelection[1][0], y: brushSelection[1][1] };
+          let x = xScale(commit.date);
+          let y = yScale(commit.hourFrac);
+
+          return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+        });
   }
 
   function isCommitSelected(commit) {
-    if (!brushSelection) {
-      return false;
-    }
-
-    let min = brushSelection[0];
-    let max = brushSelection[1];
-    let x = xScale(commit.datetime);
-    let y = yScale(commit.hourFrac);
-    return x >= min[0] && x <= max[0] && y >= min[1] && y <= max[1];
+    return selectedCommits.includes(commit);
   }
 </script>
 
@@ -195,14 +200,16 @@
         cy={yScale(commit.hourFrac)}
         r={rScale(commit.totalLines)}
         fill={isCommitSelected(commit) ? "orange" : "steelblue"}
-        on:mouseenter={(evt) => dotInteraction(index, evt)}
-        on:mouseleave={(evt) => dotInteraction(index, evt)}
         tabindex="0"
         aria-describedby="commit-tooltip"
         aria-haspopup="true"
+        role="button"
+        on:mouseenter={(evt) => dotInteraction(index, evt)}
+        on:mouseleave={(evt) => dotInteraction(index, evt)}
+        on:click={(evt) => dotInteraction(index, evt)}
+        on:keyup={(evt) => dotInteraction(index, evt)}
         on:focus={(evt) => dotInteraction(index, evt)}
         on:blur={(evt) => dotInteraction(index, evt)}
-        role="button"
       />
     {/each}
   </g>
@@ -242,7 +249,7 @@
 <p>
   {hasSelection ? selectedCommits.length : "No"} commits selected
 </p>
-<Pie data={hasSelection ? languageBreakdown : {}} />
+<Pie data={hasSelection ? languageBreakdown : []} />
 
 <style>
   svg {
