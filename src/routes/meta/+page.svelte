@@ -48,14 +48,24 @@
       });
     commits = d3.sort(commits, (d) => -d.totalLines);
     portfolio_stats = new Map([
-      ["TOTAL LINES", filteredLines.length],
-      ["TOTAL COMMITS", filteredCommits.length],
-      ["NUMBER OF FILES", d3.group(filteredLines, (d) => d.file).size],
-      ["LONGEST FILE LENGTH", d3.max(filteredLines, (d) => d.length)],
-      ["LONGEST LINE LENGTH", d3.max(filteredLines, (d) => d.line)],
-      ["DEEPEST LINE DEPTH", d3.max(filteredLines, (d) => d.depth)],
+      ["TOTAL LINES", data.length],
+      ["TOTAL COMMITS", commits.length],
+      ["NUMBER OF FILES", d3.group(data, (d) => d.file).size],
+      ["LONGEST FILE LENGTH", d3.max(data, (d) => d.length)],
+      ["LONGEST LINE LENGTH", d3.max(data, (d) => d.line)],
+      ["DEEPEST LINE DEPTH", d3.max(data, (d) => d.depth)],
     ]);
   });
+
+  // STATS
+  $: portfolio_stats = new Map([
+    ["TOTAL LINES", filteredLines.length],
+    ["TOTAL COMMITS", filteredCommits.length],
+    ["NUMBER OF FILES", d3.group(filteredLines, (d) => d.file).size],
+    ["LONGEST FILE LENGTH", d3.max(filteredLines, (d) => d.length)],
+    ["LONGEST LINE LENGTH", d3.max(filteredLines, (d) => d.line)],
+    ["DEEPEST LINE DEPTH", d3.max(filteredLines, (d) => d.depth)],
+  ]);
 
   // SELECTION
   let hasSelection,
