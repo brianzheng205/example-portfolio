@@ -143,7 +143,7 @@
   </g>
 </svg>
 
-<!-- <dl
+<dl
   id="commit-tooltip"
   class="info tooltip"
   hidden={hoveredIndex === -1}
@@ -173,7 +173,7 @@
 
   <dt>LINES EDITED</dt>
   <dd>{hoveredCommit.totalLines}</dd>
-</dl> -->
+</dl>
 
 <p>
   {hasSelection ? selectedCommits.length : "No"} commits selected
