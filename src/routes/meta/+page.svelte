@@ -121,9 +121,6 @@
 
 <Stats stats={portfolio_stats} />
 
-<h2>Commits by time of day</h2>
-
-<FileLines lines={filteredLines} {colors} />
 <Scrolly bind:progress={commitProgress}>
   {#each commits as commit, index}
     <p>
@@ -145,8 +142,38 @@
   {/each}
 
   <svelte:fragment slot="viz">
+    <h2>Commits by time of day</h2>
     <CommitScatterplot commits={filteredCommits} bind:selectedCommits />
-    <Pie data={hasSelection ? languageBreakdown : []} {colors} />
+    <Pie data={languageBreakdown} {colors} />
+  </svelte:fragment>
+</Scrolly>
+
+<Scrolly
+  bind:progress={commitProgress}
+  --scrolly-layout="viz-first"
+  debounce={5000}
+>
+  {#each commits as commit, index}
+    <p>
+      On {commit.datetime.toLocaleString("en", {
+        dateStyle: "full",
+        timeStyle: "short",
+      })}, I made
+      <a href={commit.url} target="_blank"
+        >{index > 0
+          ? "another glorious commit"
+          : "my first commit, and it was glorious"}</a
+      >. I edited {commit.totalLines} lines across {d3.rollups(
+        commit.lines,
+        (D) => D.length,
+        (d) => d.file
+      ).length} files. Then I looked over all I had made, and I saw that it was very
+      good.
+    </p>
+  {/each}
+
+  <svelte:fragment slot="viz">
+    <FileLines lines={filteredLines} {colors} />
   </svelte:fragment>
 </Scrolly>
 
