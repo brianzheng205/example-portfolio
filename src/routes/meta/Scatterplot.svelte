@@ -150,7 +150,7 @@
   style="
     top: {tooltipPosition.y}px;
     left: {tooltipPosition.x}px;
-    transition-delay: {hoveredIndex === -1 ? 200 : 0}ms;
+    transition-delay: {hoveredIndex === -1 ? 50 : 0}ms;
   "
   bind:this={commitTooltip}
   role="tooltip"
@@ -210,7 +210,7 @@
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 0em 0.5em;
-    transition-duration: 500ms;
+    transition-duration: 200ms;
     transition-property: opacity, visibility;
 
     &[hidden]:not(:hover, :focus-within) {

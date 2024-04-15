@@ -26,6 +26,7 @@
   function toggleWedge(index, event) {
     if (!event.key || event.key === "Enter") {
       selectedIndex = selectedIndex === index ? -1 : index;
+      console.log(selectedIndex);
     }
   }
 
@@ -107,14 +108,14 @@
   }
 </script>
 
-<div class="container">
+<div class="container" style={pieData.length == 0 && "visibility: hidden"}>
   <svg viewBox="-50 -50 100 100">
     {#each pieData as d, index (d.label)}
       <path
         d={d.arc}
         style="
-          --start-angle: {d.arc?.startAngle}rad;
-          --end-angle: {d.arc?.endAngle}rad;
+          --start-angle: {d?.startAngle}rad;
+          --end-angle: {d?.endAngle}rad;
         "
         fill={colors(d.label)}
         class:selected={selectedIndex === index}
@@ -129,19 +130,17 @@
     {/each}
   </svg>
 
-  {#if pieData.length > 0}
-    <ul class="legend">
-      {#each pieData as d, index (d.label)}
-        <li
-          style="--color: {colors(d.label)}"
-          class:selected={selectedIndex === index}
-        >
-          <span class="swatch" />
-          {d.label} <em>({d.value})</em>
-        </li>
-      {/each}
-    </ul>
-  {/if}
+  <ul class="legend">
+    {#each pieData as d, index (d.label)}
+      <li
+        style="--color: {colors(d.label)}"
+        class:selected={selectedIndex === index}
+      >
+        <span class="swatch" />
+        {d.label} <em>({d.value})</em>
+      </li>
+    {/each}
+  </ul>
 </div>
 
 <style>
