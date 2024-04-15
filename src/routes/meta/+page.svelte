@@ -1,6 +1,7 @@
 <script>
   import * as d3 from "d3";
   import { onMount } from "svelte";
+  import Scrolly from "svelte-scrolly";
 
   import Stats from "$lib/Stats.svelte";
   import Pie from "$lib/Pie.svelte";
@@ -121,46 +122,36 @@
 <Stats stats={portfolio_stats} />
 
 <h2>Commits by time of day</h2>
-<div class="slider">
-  <div class="bar">
-    <label for="time-scale">Show commits until:</label>
-    <input
-      type="range"
-      id="time-scale"
-      min="0"
-      max="100"
-      step="1"
-      bind:value={commitProgress}
-    />
-  </div>
-  <time>{commitMaxTime.toLocaleString()}</time>
-</div>
 
 <FileLines lines={filteredLines} {colors} />
-<CommitScatterplot commits={filteredCommits} bind:selectedCommits />
-<Pie data={hasSelection ? languageBreakdown : []} {colors} />
+<Scrolly bind:progress={commitProgress}>
+  {#each commits as commit, index}
+    <p>
+      On {commit.datetime.toLocaleString("en", {
+        dateStyle: "full",
+        timeStyle: "short",
+      })}, I made
+      <a href={commit.url} target="_blank"
+        >{index > 0
+          ? "another glorious commit"
+          : "my first commit, and it was glorious"}</a
+      >. I edited {commit.totalLines} lines across {d3.rollups(
+        commit.lines,
+        (D) => D.length,
+        (d) => d.file
+      ).length} files. Then I looked over all I had made, and I saw that it was very
+      good.
+    </p>
+  {/each}
+
+  <svelte:fragment slot="viz">
+    <CommitScatterplot commits={filteredCommits} bind:selectedCommits />
+    <Pie data={hasSelection ? languageBreakdown : []} {colors} />
+  </svelte:fragment>
+</Scrolly>
 
 <style>
-  .slider {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1em;
-
-    .bar {
-      display: flex;
-      gap: 0.5em;
-
-      label {
-        flex: 1;
-      }
-
-      input {
-        flex: 5;
-      }
-    }
-
-    time {
-      text-align: right;
-    }
+  :global(body) {
+    max-width: min(120ch, 80vw);
   }
 </style>
