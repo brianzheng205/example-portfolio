@@ -13,12 +13,12 @@
     .sort(null);
   $: {
     oldData = pieData;
-    let pieDataIR = d3.sort(
+    const pieDataIR = d3.sort(
       data.map((d) => ({ ...d })),
       (d) => d.label
     );
-    let arcData = sliceGenerator(pieDataIR);
-    let arcs = arcData.map((d) => arcGenerator(d));
+    const arcData = sliceGenerator(pieDataIR);
+    const arcs = arcData.map((d) => arcGenerator(d));
     pieData = pieDataIR.map((d, i) => ({ ...d, ...arcData[i], arc: arcs[i] }));
     transitionArcs();
   }

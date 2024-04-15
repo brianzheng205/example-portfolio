@@ -176,7 +176,7 @@
 </dl>
 
 <p>
-  {hasSelection ? selectedCommits.length : "No"} commits selected
+  {hasSelection ? selectedCommits.length : "All"} commits selected
 </p>
 
 <style>
