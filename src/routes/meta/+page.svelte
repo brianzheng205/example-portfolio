@@ -7,6 +7,7 @@
   import Pie from "$lib/Pie.svelte";
   import CommitScatterplot from "./Scatterplot.svelte";
   import FileLines from "./FileLines.svelte";
+  import StoryContent from "./StoryContent.svelte";
 
   let data = [],
     commits = [],
@@ -30,7 +31,9 @@
         let { author, date, time, timezone, datetime } = first;
         let ret = {
           id: commit,
-          url: "https://github.com/vis-society/lab-7/commit/" + commit,
+          url:
+            "https://github.com/brianzheng205/example-portfolio/commit/" +
+            commit,
           author,
           date,
           time,
@@ -49,7 +52,8 @@
 
         return ret;
       });
-    commits = d3.sort(commits, (d) => -d.totalLines);
+    commits = d3.sort(commits, (d) => d.datetime);
+    // STATS
     portfolio_stats = new Map([
       ["TOTAL LINES", data.length],
       ["TOTAL COMMITS", commits.length],
@@ -63,16 +67,6 @@
       .domain(d3.extent(commits, (c) => c.datetime))
       .range([0, 100]);
   });
-
-  // STATS
-  $: portfolio_stats = new Map([
-    ["TOTAL LINES", data.length],
-    ["TOTAL COMMITS", commits.length],
-    ["NUMBER OF FILES", d3.group(data, (d) => d.file).size],
-    ["LONGEST FILE LENGTH", d3.max(data, (d) => d.length)],
-    ["LONGEST LINE LENGTH", d3.max(data, (d) => d.line)],
-    ["DEEPEST LINE DEPTH", d3.max(data, (d) => d.depth)],
-  ]);
 
   // SELECTION
   let hasSelection,
@@ -133,22 +127,7 @@
 
 <Scrolly bind:progress={commitProgressP}>
   {#each commits as commit, index}
-    <p>
-      On {commit.datetime.toLocaleString("en", {
-        dateStyle: "full",
-        timeStyle: "short",
-      })}, I made
-      <a href={commit.url} target="_blank"
-        >{index > 0
-          ? "another glorious commit"
-          : "my first commit, and it was glorious"}</a
-      >. I edited {commit.totalLines} lines across {d3.rollups(
-        commit.lines,
-        (D) => D.length,
-        (d) => d.file
-      ).length} files. Then I looked over all I had made, and I saw that it was very
-      good.
-    </p>
+    <StoryContent {commit} />
   {/each}
 
   <svelte:fragment slot="viz">
@@ -164,22 +143,7 @@
   throttle={200}
 >
   {#each commits as commit, index}
-    <p>
-      On {commit.datetime.toLocaleString("en", {
-        dateStyle: "full",
-        timeStyle: "short",
-      })}, I made
-      <a href={commit.url} target="_blank"
-        >{index > 0
-          ? "another glorious commit"
-          : "my first commit, and it was glorious"}</a
-      >. I edited {commit.totalLines} lines across {d3.rollups(
-        commit.lines,
-        (D) => D.length,
-        (d) => d.file
-      ).length} files. Then I looked over all I had made, and I saw that it was very
-      good.
-    </p>
+    <StoryContent {commit} />
   {/each}
 
   <svelte:fragment slot="viz">

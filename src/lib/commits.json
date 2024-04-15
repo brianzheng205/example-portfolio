@@ -1,0 +1,23 @@
+{
+  "00d3b6c": "I moved my original portfolio to this Svelte project. This included the Home, Resume, Projects, Contact, and Github pages.",
+  "7fcb2c6d": "I added styling to the project, especially the Resume page. I also made components for the Projects page so that my code was cleaner and reusable.",
+  "04bde764": "I created the theme switcher.",
+  "24a99209": "I added placeholder Github stats on the Home page.",
+  "1eac93e7": "I replaced the placeholder info on the Projects page with my actual projects.",
+  "516c9ce0": "I replaced the placeholder Github stats with my actual Github stats on the Home page.",
+  "ec92dd9b": "I created the Pie Chart on the Projects page.",
+  "e253b554": "I improved the Pie Chart UI.",
+  "6937b2f2": "I created the Meta page with basic stats about my project",
+  "d555b494": "I created the Scatterplot on this page.",
+  "119fa8c8": "I added the Pie Chart to the Meta Page.",
+  "47f6d97a": "I fixed some bugs with the Scatterplot and Pie Chart.",
+  "c0c484ef": "I updated my projects page with my Bike Watching project.",
+  "1ab71d1d": "I refactored some code.",
+  "6c26bb35": "I added a slider component to the Scatterplot that allows the user to select the range of times of the commits they want to see.",
+  "92279cf9": "I made the stats reactive with the time slider.",
+  "533e6ab9": "I added the visualization of the file lines for each file to Meta page.",
+  "aa18f3db": "I smoothed the transitions for the Pie Charts",
+  "e07a8e35": "I added back the tooltip, which I forgot to uncomment.",
+  "a76f80d3": "I changed the Scatterplot and Pie Chart on the Meta page to be part of a scrolling narrative.",
+  "52e65211": "I changed the file lines visualization to be a scrolling narrative as well and fixed some bugs with the other scrolling narrative."
+}

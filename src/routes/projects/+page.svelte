@@ -1,7 +1,9 @@
 <script>
   import * as d3 from "d3";
+
   import Projects from "$lib/Projects.svelte";
   import Pie from "$lib/Pie.svelte";
+
   import projects from "$lib/projects.json";
 
   let query = "",
