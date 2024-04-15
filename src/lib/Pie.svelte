@@ -2,16 +2,25 @@
   import * as d3 from "d3";
 
   export let data = [],
-    colors = d3.scaleOrdinal(d3.schemeTableau10);
+    colors = d3.scaleOrdinal(d3.schemeTableau10),
+    transitionDuration = 300;
   let selectedIndex = -1;
   let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
   let pieData;
-  let sliceGenerator = d3.pie().value((d) => d.value);
+  let sliceGenerator = d3
+    .pie()
+    .value((d) => d.value)
+    .sort(null);
   $: {
-    pieData = data.map((d) => ({ ...d }));
-    let arcData = sliceGenerator(pieData);
+    oldData = pieData;
+    let pieDataIR = d3.sort(
+      data.map((d) => ({ ...d })),
+      (d) => d.label
+    );
+    let arcData = sliceGenerator(pieDataIR);
     let arcs = arcData.map((d) => arcGenerator(d));
-    pieData = pieData.map((d, i) => ({ ...d, ...arcData[i], arc: arcs[i] }));
+    pieData = pieDataIR.map((d, i) => ({ ...d, ...arcData[i], arc: arcs[i] }));
+    transitionArcs();
   }
 
   function toggleWedge(index, event) {
@@ -19,11 +28,88 @@
       selectedIndex = selectedIndex === index ? -1 : index;
     }
   }
+
+  // TRANSITION
+  let oldData = [],
+    wedges = {};
+
+  /**
+   * Transition-in function for arcs
+   * @param wedge
+   */
+  function arc(wedge) {
+    let transition = transitionArc(wedge);
+
+    return {
+      duration: transitionDuration,
+      css: (t, u) => {
+        return transition.interpolator(transition.type === "out" ? u : t);
+      },
+    };
+  }
+
+  /**
+   * Transition-bewteen function for arcs
+   * @param wedge
+   */
+  function transitionArcs() {
+    let wedgeElements = Object.values(wedges);
+
+    d3.selectAll(wedgeElements)
+      .transition("arc")
+      .duration(transitionDuration)
+      .ease(d3.easeLinear)
+      .styleTween("d", function (_, index) {
+        let wedge = this;
+        let label = Object.keys(wedges)[index];
+        let transition = transitionArc(wedge, label);
+        return transition?.interpolator;
+      });
+  }
+
+  function transitionArc(wedge, label) {
+    label ??= Object.entries(wedges).find(([label, w]) => w === wedge)[0];
+    let d_old = oldData.find((d) => d.label === label);
+    let d = pieData.find((d) => d.label === label);
+
+    if (sameArc(d_old, d)) {
+      return null;
+    }
+
+    let from = d_old ? { ...d_old } : getEmptyArc(label, oldData);
+    let to = d ? { ...d } : getEmptyArc(label);
+    let angleInterpolator = d3.interpolate(from, to);
+    let interpolator = (t) => `path("${arcGenerator(angleInterpolator(t))}")`;
+    let type = d ? (d_old ? "update" : "in") : "out";
+    return { d, d_old, from, to, interpolator, type };
+  }
+
+  function sameArc(d1, d2) {
+    return (
+      (!d1 && !d2) ||
+      (d1?.startAngle === d2?.startAngle && d1?.endAngle === d2?.endAngle)
+    );
+  }
+
+  function getEmptyArc(label, data = pieData) {
+    let labels = d3.sort(new Set([...oldData, ...pieData].map((d) => d.label)));
+    let labelIndex = labels.indexOf(label);
+    let sibling;
+    for (let i = labelIndex - 1; i >= 0; i--) {
+      sibling = data.find((d) => d.label === labels[i]);
+      if (sibling) {
+        break;
+      }
+    }
+
+    let angle = sibling?.endAngle ?? 0;
+    return { startAngle: angle, endAngle: angle };
+  }
 </script>
 
 <div class="container">
   <svg viewBox="-50 -50 100 100">
-    {#each pieData as d, index}
+    {#each pieData as d, index (d.label)}
       <path
         d={d.arc}
         style="
@@ -37,13 +123,15 @@
         tabindex="0"
         role="button"
         aria-label={d.label}
+        bind:this={wedges[d.label]}
+        transition:arc
       />
     {/each}
   </svg>
 
   {#if pieData.length > 0}
     <ul class="legend">
-      {#each pieData as d, index}
+      {#each pieData as d, index (d.label)}
         <li
           style="--color: {colors(d.label)}"
           class:selected={selectedIndex === index}
@@ -77,6 +165,7 @@
 
   path {
     transition: 300ms;
+    transition-property: transform, opacity, fill;
     cursor: pointer;
     outline: none;
     --angle: calc(var(--end-angle) - var(--start-angle));

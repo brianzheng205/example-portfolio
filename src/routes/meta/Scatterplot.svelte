@@ -95,7 +95,7 @@
       : commits.filter((commit) => {
           let min = { x: brushSelection[0][0], y: brushSelection[0][1] };
           let max = { x: brushSelection[1][0], y: brushSelection[1][1] };
-          let x = xScale(commit.date);
+          let x = xScale(commit.datetime);
           let y = yScale(commit.hourFrac);
 
           return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
@@ -143,7 +143,7 @@
   </g>
 </svg>
 
-<dl
+<!-- <dl
   id="commit-tooltip"
   class="info tooltip"
   hidden={hoveredIndex === -1}
@@ -173,7 +173,7 @@
 
   <dt>LINES EDITED</dt>
   <dd>{hoveredCommit.totalLines}</dd>
-</dl>
+</dl> -->
 
 <p>
   {hasSelection ? selectedCommits.length : "No"} commits selected
