@@ -26,7 +26,6 @@
   function toggleWedge(index, event) {
     if (!event.key || event.key === "Enter") {
       selectedIndex = selectedIndex === index ? -1 : index;
-      console.log(selectedIndex);
     }
   }
 
@@ -44,7 +43,7 @@
     return {
       duration: transitionDuration,
       css: (t, u) => {
-        return transition.interpolator(transition.type === "out" ? u : t);
+        return `d: ${transition.interpolator(transition.type === "out" ? u : t)}`;
       },
     };
   }
