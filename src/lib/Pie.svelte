@@ -11,16 +11,44 @@
     .pie()
     .value((d) => d.value)
     .sort(null);
+
+  /**
+   * Checks if two arrays of pie chart data are equal. Assumes that the order of
+   * the data is the same.
+   * @param pieChartData1 pie chart data 1
+   * @param pieChartData2 pie chart data 2
+   */
+  function dataIsEqual(pieChartData1, pieChartData2) {
+    return (
+      pieChartData1.length === pieChartData2.length &&
+      pieChartData1.every(
+        (d, i) =>
+          d.label === pieChartData2[i].label &&
+          d.value === pieChartData2[i].value
+      )
+    );
+  }
+
   $: {
-    oldData = pieData;
+    oldPieData = pieData;
     const pieDataIR = d3.sort(
-      data.map((d) => ({ ...d })),
+      data.map((d) => ({ ...d, value: parseFloat(d.value) })),
       (d) => d.label
     );
-    const arcData = sliceGenerator(pieDataIR);
-    const arcs = arcData.map((d) => arcGenerator(d));
-    pieData = pieDataIR.map((d, i) => ({ ...d, ...arcData[i], arc: arcs[i] }));
-    transitionArcs();
+
+    if (!pieData || !oldPieData || !dataIsEqual(oldPieData, pieDataIR)) {
+      const arcData = sliceGenerator(pieDataIR);
+      const arcs = arcData.map((d) => arcGenerator(d));
+      pieData = pieDataIR.map((d, i) => ({
+        ...d,
+        ...arcData[i],
+        arc: arcs[i],
+      }));
+    }
+
+    if (!pieData || !oldPieData || !dataIsEqual(oldPieData, pieData)) {
+      transitionArcs();
+    }
   }
 
   function toggleWedge(index, event) {
@@ -30,11 +58,11 @@
   }
 
   // TRANSITION
-  let oldData = [],
+  let oldPieData = [],
     wedges = {};
 
   /**
-   * Transition-in function for arcs
+   * Transition-in function for arcs.
    * @param wedge
    */
   function arc(wedge) {
@@ -49,7 +77,7 @@
   }
 
   /**
-   * Transition-bewteen function for arcs
+   * Transition-bewteen function for arcs.
    * @param wedge
    */
   function transitionArcs() {
@@ -69,14 +97,14 @@
 
   function transitionArc(wedge, label) {
     label ??= Object.entries(wedges).find(([label, w]) => w === wedge)[0];
-    let d_old = oldData.find((d) => d.label === label);
+    let d_old = oldPieData.find((d) => d.label === label);
     let d = pieData.find((d) => d.label === label);
 
     if (sameArc(d_old, d)) {
       return null;
     }
 
-    let from = d_old ? { ...d_old } : getEmptyArc(label, oldData);
+    let from = d_old ? { ...d_old } : getEmptyArc(label, oldPieData);
     let to = d ? { ...d } : getEmptyArc(label);
     let angleInterpolator = d3.interpolate(from, to);
     let interpolator = (t) => `path("${arcGenerator(angleInterpolator(t))}")`;
@@ -92,7 +120,9 @@
   }
 
   function getEmptyArc(label, data = pieData) {
-    let labels = d3.sort(new Set([...oldData, ...pieData].map((d) => d.label)));
+    let labels = d3.sort(
+      new Set([...oldPieData, ...pieData].map((d) => d.label))
+    );
     let labelIndex = labels.indexOf(label);
     let sibling;
     for (let i = labelIndex - 1; i >= 0; i--) {
