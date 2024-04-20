@@ -56,6 +56,15 @@
     }
   }
 
+  /**
+   * Wrapper function to ensure that `commits` used in DOM is always up-to-date
+   * because before, rScale was being called on commits that were not in `commits`.
+   * @param totalLines
+   */
+  function rScaleWrapper(totalLines, commits) {
+    return rScale(totalLines);
+  }
+
   // TOOLTIP
   let hoveredIndex = -1,
     hoveredCommit = {},
@@ -126,7 +135,7 @@
       <circle
         cx={xScale(commit.datetime)}
         cy={yScale(commit.hourFrac)}
-        r={rScale(commit.totalLines)}
+        r={rScaleWrapper(commit.totalLines, commits)}
         fill={isCommitSelected(commit) ? "orange" : "steelblue"}
         tabindex="0"
         aria-describedby="commit-tooltip"
